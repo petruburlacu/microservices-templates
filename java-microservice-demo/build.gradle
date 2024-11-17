@@ -1,0 +1,89 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.3.4'
+	id 'io.spring.dependency-management' version '1.1.6'
+	id "org.openapi.generator" version '7.7.0'
+}
+
+ext{
+}
+
+group = 'com.org'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
+}
+
+
+
+repositories {
+	mavenCentral()
+}
+
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+//	Swagger 3
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
+	implementation 'io.micrometer:micrometer-registry-prometheus'
+	implementation 'net.logstash.logback:logstash-logback-encoder:7.0'
+
+	// OpenAPI
+	implementation 'org.openapitools:jackson-databind-nullable:0.2.6'
+
+	annotationProcessor 'org.projectlombok:lombok'
+	compileOnly 'org.projectlombok:lombok'
+
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.security:spring-security-test'
+	testImplementation 'org.junit.jupiter:junit-jupiter-api'
+	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+tasks.register('deleteExtraGeneratedDirectories', Delete) {
+	delete ".openapi-generator"
+	// anything else for clean-up
+}
+
+tasks.named('deleteExtraGeneratedDirectories') {
+	dependsOn(tasks.openApiGenerate)
+}
+tasks.named('compileJava') {
+	dependsOn(tasks.deleteExtraGeneratedDirectories)
+}
+
+sourceSets.main.java.srcDir "${buildDir}/generate-resources/main/src/main/java"
+
+/**
+ * Use this task to generate client from an existing yaml spec
+ * Multiple generators like java, spring, etc
+ * https://openapi-generator.tech/docs/generators/
+ */
+openApiGenerate {
+	generatorName.set('java') // spring, java, etc
+	configOptions.set([
+			dateLibrary: "java8",
+			generateBuilders: "true",
+			generateClientAsBean: "true",
+			library: "restclient", // spring-boot, restclient,
+			useRuntimeException: "true",
+	])
+		inputSpec.set("$rootDir/specs/openapi-main-v1.0.yaml") // Need to make it automatic
+	// remoteInputSpec.set('http://some-service.net/v3/api-docs') // Can do remote spec location
+	ignoreFileOverride.set(".openapi-generator-ignore")
+	invokerPackage.set('com.org')
+	modelPackage.set('com.org.model')
+	apiPackage.set('com.org.api')
+}

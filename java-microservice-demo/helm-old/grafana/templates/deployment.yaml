@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{.Chart.Name}}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app:  {{.Chart.Name}}
+  template:
+    metadata:
+      labels:
+        app:  {{.Chart.Name}}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          ports:
+            - containerPort: {{ .Values.service.port }}
+          env:
+            - name: GF_SECURITY_ADMIN_USER
+              value: "{{ .Values.env.GF_SECURITY_ADMIN_USER }}"
+            - name: GF_SECURITY_ADMIN_PASSWORD
+              value: "{{ .Values.env.GF_SECURITY_ADMIN_PASSWORD }}"
+          volumeMounts:
+            - name: grafana-data
+              mountPath: /var/lib/grafana
+      volumes:
+        - name: grafana-data
+          emptyDir: {}

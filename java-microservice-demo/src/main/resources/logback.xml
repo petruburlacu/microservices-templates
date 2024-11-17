@@ -1,0 +1,58 @@
+<configuration>
+  <springProfile name="prod">
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+      <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+        <providers>
+          <logLevel>
+            <fieldName>Level</fieldName>
+          </logLevel>
+          <threadName>
+            <fieldName>Thread</fieldName>
+          </threadName>
+          <loggerName>
+            <fieldName>Logger</fieldName>
+          </loggerName>
+          <callerData>
+            <classFieldName>Class</classFieldName>
+            <methodFieldName>Method</methodFieldName>
+            <fileFieldName>File</fileFieldName>
+            <lineFieldName>Line</lineFieldName>
+          </callerData>
+          <message>
+            <fieldName>Message</fieldName>
+          </message>
+          <throwableClassName>
+            <fieldName>ExceptionClass</fieldName>
+          </throwableClassName>
+          <stackTrace>
+            <fieldName>StackTrace</fieldName>
+            <!-- maxLength - limit the length of the stack trace -->
+            <throwableConverter class="net.logstash.logback.stacktrace.ShortenedThrowableConverter">
+              <maxDepthPerThrowable>200</maxDepthPerThrowable>
+              <maxLength>2000</maxLength>
+              <rootCauseFirst>true</rootCauseFirst>
+            </throwableConverter>
+          </stackTrace>
+        </providers>
+      </encoder>
+    </appender>
+    <root level="INFO">
+      <appender-ref ref="CONSOLE"/>
+    </root>
+  </springProfile>
+
+
+
+  <springProfile name="dev">
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+      <encoder>
+        <pattern>%yellow(%d{yyyy-MM-dd HH:mm:ss}) %highlight(%-5p) %green(%c{1}:%L) - %msg%n</pattern>
+      </encoder>
+    </appender>
+
+    <!-- Root Logger Configuration -->
+    <root level="INFO">
+      <appender-ref ref="CONSOLE" />
+    </root>
+  </springProfile>
+</configuration>

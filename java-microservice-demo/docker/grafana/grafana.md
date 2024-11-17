@@ -1,0 +1,1 @@
+Ensure that the Grafana data source configuration in the Grafana UI points to http://prometheus:9090.

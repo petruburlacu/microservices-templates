@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{.Chart.Name}}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.port }}
+      nodePort: {{ .Values.service.nodePort }}
+    - port: {{ .Values.service.managementPort }}
+      targetPort: {{ .Values.service.managementPort }}
+      nodePort: {{ .Values.service.managementNodePort }}
+  selector:
+    app: {{.Chart.Name}}

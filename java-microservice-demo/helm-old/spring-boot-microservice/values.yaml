@@ -1,0 +1,13 @@
+replicaCount: 1
+image:
+  repository: your-docker-image
+  tag: latest
+  pullPolicy: IfNotPresent
+service:
+  type: NodePort
+  port: 8080
+  managementPort: 8081
+  nodePort: 30080
+  managementNodePort: 30081
+env:
+  SPRING_PROFILES_ACTIVE: prod

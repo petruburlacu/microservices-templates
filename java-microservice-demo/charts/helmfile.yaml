@@ -1,0 +1,7 @@
+#TODO: We need a config map
+
+#We can say: deploy these services
+
+#We can deploy some stuff for DEV and other for PROD
+
+#Build docker image, push to your registry and in helm charts just specify registry and image

@@ -1,0 +1,44 @@
+spring:
+  profiles:
+    active: prod
+  application:
+    name: microservice
+  mvc:
+    problemdetails:
+      enabled: true
+
+server:
+  port: 8082
+
+management:
+  metrics:
+    tags:
+      application: ${spring.application.name}
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics, prometheus
+  server:
+    port: 8083
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+
+logging:
+  level:
+    com:
+      org:
+        microservice: INFO
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+  show-actuator: true
+
+
+microservices:
+  main:
+    baseUrl: http://localhost:8080
