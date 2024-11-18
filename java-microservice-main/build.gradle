@@ -7,6 +7,7 @@ plugins {
 }
 
 ext{
+	profile = 'prod'
 }
 
 group = 'com.org'
@@ -103,7 +104,9 @@ openApi {
 	outputDir.set(file("$buildDir/openapi"))
 	outputFileName.set("openapi.yaml")
 	waitTimeInSeconds.set(10)
-//	forkProperties.set(["spring.profiles.active": "prod"])
+//	customBootRun {
+//		args = ['--spring.profiles.active=${profile}' ]
+//	}
 }
 
 tasks.register('generateOpenApiSpec', org.springdoc.openapi.gradle.plugin.OpenApiGeneratorTask) {
