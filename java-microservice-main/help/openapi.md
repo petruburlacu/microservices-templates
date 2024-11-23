@@ -15,32 +15,32 @@
 
 ### Summary
 This documentation provides an overview of how to generate and use OpenAPI specifications across multiple microservices. It includes details on how the main service generates the OpenAPI specifications from the existing controller and models, the demo service that consumes these specifications, and the Gradle logic used to automate the generation of client code.
+
+In real scenarios, the OpenAPI specifications will be shared across multiple microservices to ensure consistency and compatibility between services. This creates a contract between the services, reducing the risk of breaking changes and providing a clear understanding of the API endpoints and data models.
 ```mermaid
 graph TD  
-    A[Main Service] -->|Generates OpenAPI Spec| B[Swagger Endpoint /v3/api-docs.yaml]  
-    B -->|Fetches Spec| C[Integration Test]  
-    C -->|Saves Spec| D[build/generated/openapi/specification/openapi.yaml]  
-    D -->|Publishes Spec| E[CI/CD Pipeline]  
+  subgraph Main Service
+        A[Generates OpenAPI Spec]| B[Swagger Endpoint /v3/api-docs.yaml]  
+        B -->|Fetches Spec| C[Integration Test]  
+        C -->|Saves Spec| D[build/generated/openapi/specification/openapi.yaml]  
+        D -->|Publishes Spec| E[CI/CD Pipeline]  
   
     subgraph Demo Service  
-        F[Fetches Spec from Main Service]  
-        G[Shared Microservices Specifications]  
-        H[Generates Shared Clients]  
-        I[Configuration for Shared Clients]  
+        F[Fetches Shared Microservices Specifications from Somewhere]  
+        G[Generates Shared Clients]  
+        H[Configuration for Shared Clients]  
     end  
   
     E -->|Shares Spec| F  
     F --> G  
     G --> H  
-    H --> I  
   
-    subgraph Benefits  
+    subgraph OpenAPI Specifications  
         J[QA Testing]  
-        K[Client Transparency]  
+        K[Client & Stakeholders]  
+        L[Onboarding & Documentation]
     end  
-  
-    I --> J  
-    I --> K
+end
 ```
 
 ### Main Service
