@@ -18,29 +18,31 @@ This documentation provides an overview of how to generate and use OpenAPI speci
 
 In real scenarios, the OpenAPI specifications will be shared across multiple microservices to ensure consistency and compatibility between services. This creates a contract between the services, reducing the risk of breaking changes and providing a clear understanding of the API endpoints and data models.
 ```mermaid
-graph TD  
-  subgraph Main Service
-        A[Generates OpenAPI Spec]| B[Swagger Endpoint /v3/api-docs.yaml]  
-        B -->|Fetches Spec| C[Integration Test]  
-        C -->|Saves Spec| D[build/generated/openapi/specification/openapi.yaml]  
-        D -->|Publishes Spec| E[CI/CD Pipeline]  
-  
-    subgraph Demo Service  
-        F[Fetches Shared Microservices Specifications from Somewhere]  
-        G[Generates Shared Clients]  
-        H[Configuration for Shared Clients]  
-    end  
-  
-    E -->|Shares Spec| F  
-    F --> G  
-    G --> H  
-  
-    subgraph OpenAPI Specifications  
-        J[QA Testing]  
-        K[Client & Stakeholders]  
-        L[Onboarding & Documentation]
-    end  
-end
+graph TD
+    A[Main Service] -->|Generates OpenAPI Spec| B[Swagger Endpoint /v3/api-docs.yaml]
+    B -->|Fetches Spec| C[Integration Test]
+    C -->|Saves Spec| D[build/generated/openapi/specification/openapi.yaml]
+    D -->|Publishes Spec| E[CI/CD Pipeline]
+
+    subgraph Demo Service
+        F[Fetches Spec from Main Service]
+        G[Generates Shared Clients]
+        H[Configures Shared Clients]
+    end
+
+    E -->|Shares Spec| F
+    F --> G
+    G --> H
+
+    subgraph Benefits
+        I[QA Testing]
+        J[Client Transparency]
+        K[Onboarding & Documentation]
+    end
+
+    H --> I
+    H --> J
+    H --> K
 ```
 
 ### Main Service
