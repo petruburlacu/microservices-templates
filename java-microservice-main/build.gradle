@@ -3,7 +3,6 @@ plugins {
 	id 'org.springframework.boot' version '3.3.4'
 	id 'io.spring.dependency-management' version '1.1.6'
 	id "org.openapi.generator" version '7.7.0'
-	id 'org.springdoc.openapi-gradle-plugin' version '1.9.0'
 }
 
 ext{
@@ -40,11 +39,7 @@ dependencies {
 	// OpenAPI
 	implementation 'org.openapitools:jackson-databind-nullable:0.2.6'
 	// This dependency is relevant if you want to generate the OpenAPI description without using the swagger-ui.
-	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-api:2.6.0'
-	// Runtime library
-	implementation 'com.github.therapi:therapi-runtime-javadoc:0.15.0'
-	// Annotation processor
-	annotationProcessor 'com.github.therapi:therapi-runtime-javadoc-scribe:0.15.0'
+//	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-api:2.6.0'
 
 	annotationProcessor 'org.projectlombok:lombok'
 	compileOnly 'org.projectlombok:lombok'
@@ -66,51 +61,32 @@ tasks.register('deleteExtraGeneratedDirectories', Delete) {
 }
 
 tasks.named('deleteExtraGeneratedDirectories') {
-	dependsOn(tasks.openApiGenerate)
+//	dependsOn(tasks.openApiGenerateForService1, tasks.openApiGenerateForService2)
+
 }
 tasks.named('compileJava') {
 	dependsOn(tasks.deleteExtraGeneratedDirectories)
 }
 
-sourceSets.main.java.srcDir "${buildDir}/generate-resources/main/src/main/java"
+//sourceSets.main.java.srcDir "${buildDir}/generate-resources/main/src/main/java"
 
-/**
- * Use this task to generate client from an existing yaml spec
- * Multiple generators like java, spring, etc
- * https://openapi-generator.tech/docs/generators/
- */
-openApiGenerate {
-	generatorName.set('java') // spring, java, etc
-	configOptions.set([
-			dateLibrary: "java8",
-			generateBuilders: "true",
-			generateClientAsBean: "true",
-			library: "restclient", // spring-boot, restclient,
-			useRuntimeException: "true",
-	])
-		inputSpec.set("$rootDir/specs/org-api-v1.0.yaml")
-	// remoteInputSpec.set('http://some-service.net/v3/api-docs') // Can do remote spec location
-	ignoreFileOverride.set(".openapi-generator-ignore")
-	invokerPackage.set('com.org')
-	modelPackage.set('com.org.model')
-	apiPackage.set('com.org.api')
-}
-
-/**
- * Use this task to generate openapi spec from this application
- */
-openApi {
-	apiDocsUrl.set("http://localhost:8080/v3/api-docs")
-	outputDir.set(file("$buildDir/openapi"))
-	outputFileName.set("openapi.yaml")
-	waitTimeInSeconds.set(10)
-//	customBootRun {
-//		args = ['--spring.profiles.active=${profile}' ]
-//	}
-}
-
-tasks.register('generateOpenApiSpec', org.springdoc.openapi.gradle.plugin.OpenApiGeneratorTask) {
-	group = 'documentation'
-	description = 'Generates the OpenAPI specification'
-}
-//type: org.springdoc.openapi.gradle.plugin.OpenApiGeneratorTask)
+///**
+// * Use this task to generate client from an existing / shared openapi yaml spec
+// * Multiple generators like java, spring, etc
+// * https://openapi-generator.tech/docs/generators/
+// */
+//openApiGenerate {
+//	generatorName.set('java') // spring, java, etc
+//	configOptions.set([
+//			dateLibrary: "java8",
+//			generateBuilders: "true",
+//			generateClientAsBean: "true",
+//			library: "restclient", // spring-boot, restclient,
+//			useRuntimeException: "true",
+//	])
+//		inputSpec.set("$rootDir/specs/org-api-v1.0.yaml") // remoteInputSpec.set('http://some-service.net/v3/api-docs') // Can do remote spec location
+//	ignoreFileOverride.set(".openapi-generator-ignore")
+//	invokerPackage.set('com.org')
+//	modelPackage.set('com.org.model')
+//	apiPackage.set('com.org.api')
+//}

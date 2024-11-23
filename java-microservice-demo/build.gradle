@@ -80,7 +80,7 @@ openApiGenerate {
 			library: "restclient", // spring-boot, restclient,
 			useRuntimeException: "true",
 	])
-		inputSpec.set("$rootDir/specs/openapi-main-v1.0.yaml") // Need to make it automatic
+	inputSpec.set("$rootDir/specs/openapi-main-v1.0.yaml") // Need to make it automatic
 	// remoteInputSpec.set('http://some-service.net/v3/api-docs') // Can do remote spec location
 	ignoreFileOverride.set(".openapi-generator-ignore")
 	invokerPackage.set('com.org')
