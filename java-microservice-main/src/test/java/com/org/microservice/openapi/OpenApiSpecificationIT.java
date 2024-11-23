@@ -18,6 +18,8 @@ import org.springframework.http.ResponseEntity;
 public class OpenApiSpecificationIT {
 
   private static final Logger logger = LoggerFactory.getLogger(OpenApiSpecificationIT.class);
+  private static final String OPENAPI_SPEC_OUTPUT= "build/generated/openapi/specification/";
+  private static final String OPENAPI_SPEC_FILE_NAME = "openapi.yaml";
 
   @LocalServerPort
   private int port;
@@ -31,7 +33,7 @@ public class OpenApiSpecificationIT {
     ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
 
     if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-      saveToFile("specs/openapi.yaml", response.getBody());
+      saveToFile(OPENAPI_SPEC_OUTPUT+ OPENAPI_SPEC_FILE_NAME, response.getBody());
     } else {
       logger.error("Failed to generate OpenAPI specification through swagger /v3/api-docs.yaml: {}", response.getStatusCode());
       throw new RuntimeException("Failed to fetch OpenAPI specification");

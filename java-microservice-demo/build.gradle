@@ -57,33 +57,70 @@ tasks.register('deleteExtraGeneratedDirectories', Delete) {
 	// anything else for clean-up
 }
 
-tasks.named('deleteExtraGeneratedDirectories') {
-	dependsOn(tasks.openApiGenerate)
+//We could provide just the directory, fetch the .yaml files and iterate over them
+String[] specifications = [
+		"main_service_v1",
+		"user_service_v2"
+]
+
+void createOpenApiGenerateTask(String yamlSpec) {
+	String taskName = "openApiGenerate_" + yamlSpec;
+	task(taskName, type: org.openapitools.generator.gradle.plugin.tasks.GenerateTask) {
+		inputSpec.set("$rootDir/specs/${yamlSpec}.yaml".toString())
+		outputDir.set("$buildDir/generated/openapi/${yamlSpec}")
+		ignoreFileOverride.set("$rootDir/.openapi-generator-ignore")
+		invokerPackage.set("com.org.${yamlSpec}") // Could extract as constant
+		packageName.set("com.org.${yamlSpec}")
+		modelPackage.set("com.org.${yamlSpec}.model")
+		apiPackage.set("com.org.${yamlSpec}.api")
+		modelNameSuffix.set('')
+		validateSpec.set(true)
+
+		// spring, java, etc -> This is what we actually generate from the provided spec. No reason not to use the same language as the project
+		generatorName.set('java') // spring, java, etc
+		// TODO: use yaml configuration file to set configOptions
+		configOptions.set([
+				dateLibrary: "java8",
+				generateBuilders: "true",
+				generateClientAsBean: "true",
+				library: "restclient", // spring-boot, restclient,
+				useRuntimeException: "true",
+				userBeanValidation: "true",
+		])
+
+//		generatorName.set('spring') // spring, java, etc
+//		configOptions.set([
+//				title: "${yamlSpec}",
+//				useJakartaEe: "true",
+//				dateLibrary: "java8",
+//				generateBuilders: "true",
+//				library: "spring-boot", // spring-boot, spring-http-interface,
+//				useRuntimeException: "true",
+//				userBeanValidation: "true",
+//				interfaceOnly: "true", // for spring
+//		])
+	}
+	tasks.deleteExtraGeneratedDirectories{
+		dependsOn(taskName)
+	}
 }
-tasks.named('compileJava') {
+
+for (String yamlSpec : specifications) {
+	createOpenApiGenerateTask(yamlSpec);
+}
+
+// Making generated source visible (classpath)
+sourceSets {
+	main {
+		java {
+			srcDir("${buildDir}/generated/openapi/main_service_v1/src/main/java")
+			srcDir("${buildDir}/generated/openapi/user_service_v2/src/main/java")
+			srcDir("${buildDir}/generated/openapi/src/main/java")
+		}
+	}
+}
+// TODO: Need to create constants / variables for the generated source directories
+
+tasks.compileJava{
 	dependsOn(tasks.deleteExtraGeneratedDirectories)
-}
-
-sourceSets.main.java.srcDir "${buildDir}/generate-resources/main/src/main/java"
-
-/**
- * Use this task to generate client from an existing yaml spec
- * Multiple generators like java, spring, etc
- * https://openapi-generator.tech/docs/generators/
- */
-openApiGenerate {
-	generatorName.set('java') // spring, java, etc
-	configOptions.set([
-			dateLibrary: "java8",
-			generateBuilders: "true",
-			generateClientAsBean: "true",
-			library: "restclient", // spring-boot, restclient,
-			useRuntimeException: "true",
-	])
-	inputSpec.set("$rootDir/specs/openapi-main-v1.0.yaml") // Need to make it automatic
-	// remoteInputSpec.set('http://some-service.net/v3/api-docs') // Can do remote spec location
-	ignoreFileOverride.set(".openapi-generator-ignore")
-	invokerPackage.set('com.org')
-	modelPackage.set('com.org.model')
-	apiPackage.set('com.org.api')
 }

@@ -1,7 +1,7 @@
 package com.org.microservice.config;
 
-import com.org.ApiClient;
-import com.org.api.DocumentsApi;
+import com.org.user_service_v2.ApiClient;
+import com.org.user_service_v2.api.DefaultApi;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,10 +9,10 @@ import org.springframework.http.client.support.BasicAuthenticationInterceptor;
 import org.springframework.web.client.RestClient;
 
 @Configuration
-public class ApiClientConfig {
+public class UserServiceClientConfig {
   private final String baseUrl;
 
-  public ApiClientConfig(@Value("${microservices.main.baseUrl}") final String baseUrl) {
+  public UserServiceClientConfig(@Value("${microservices.users.baseUrl}") final String baseUrl) {
     this.baseUrl = baseUrl;
   }
 
@@ -27,8 +27,8 @@ public class ApiClientConfig {
   }
 
   @Bean
-  public DocumentsApi documentsApi(ApiClient apiClient) {
-    return new DocumentsApi(apiClient);
+  public DefaultApi usersApi(ApiClient apiClient) {
+    return new DefaultApi(apiClient);
   }
 
 }
